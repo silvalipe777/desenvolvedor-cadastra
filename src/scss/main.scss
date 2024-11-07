@@ -164,3 +164,29 @@ body {
 
     }
 }
+.modal{
+    position: fixed;
+    top: 0;
+    left: -100vw;
+    width: 100vw;
+    height: 100vh;
+    background-color: #ffffff;
+    overflow-y: scroll;
+    opacity: 0;
+    transition: left 1s ease-in-out;
+}
+.show-modal{
+    left: 0;
+    opacity: 1;
+}
+.modal-header{
+    padding: 24px;
+    background-color: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #666666;
+    color: #666666;
+    font-size: 28px;
+    font-weight: 400;
+}
