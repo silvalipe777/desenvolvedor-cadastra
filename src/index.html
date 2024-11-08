@@ -11,16 +11,19 @@
 
 <body>
   <header class="header">
+    <div class="header__container">
     <img src="/img/logo.png" alt="" class="header__logo">
     <div class="header__cart-button">
       <img src="/img/cart.png" alt="" class="">
     </div>
+  </div>
   </header>
   <section class="plp">
 
     <h2 class="plp__title">Blusas</h2>
     <div class="btn-dropdown-order">
-      <button class="btn-dropdown-order__button" id="btn-open-dropdown-order"><span>Ordenar por:</span> <img src="img/arrow-down.svg" alt=""></button>
+      <button class="btn-dropdown-order__button" id="btn-open-dropdown-order"><span>Ordenar por:</span> <img
+          src="img/arrow-down.svg" alt=""></button>
       <div class="btn-dropdown-order__dropdown " id="dropdown-order-desktop">
         <ul id="list-order-desktop" class="order-options-desktop">
           <li data-order="data-recente">Mais recente</li>
@@ -109,60 +112,66 @@
     <div class="modal-header">
       <h2>FILTRAR</h2>
       <button id="close-filter-button" class="modal-header__close-modal"><img src="/img/close.svg" alt=""></button>
-    
-    </div>
-      <div class="modal-body modal-filters-body ">
-        <div class="list-filters">
-          <p class="list-filters__title">CORES</p>
-          <ul class="list-filters__checkboxes" id="ul-all-colors-mobile">
-            <li><input type="checkbox" data-order-color="Amarelo">Amarelo</li>
-            <li><input type="checkbox" data-order-color="Azul">Azul</li>
-            <li><input type="checkbox" data-order-color="Branco">Branco</li>
-            <li><input type="checkbox" data-order-color="Cinza">Cinza</li>
-            <li><input type="checkbox" data-order-color="Laranja">Laranja</li>
-            <li><input type="checkbox" data-order-color="Verde">Verde</li>
-            <li><input type="checkbox" data-order-color="Vermelho">Vermelho</li>
-            <li><input type="checkbox" data-order-color="Preto">Preto</li>
-            <li><input type="checkbox" data-order-color="Rosa">Rosa</li>
-            <li><input type="checkbox" data-order-color="Vinho">Vinho</li>
-          </ul>
-        
-        </div>
-        <div class="list-filters">
-          <p class="list-filters__title">TAMANHOS</p>
-          <ul class="list-filters__buttons" id="ul-all-sizes-mobile">
-            <li data-order-size="\bP\b">P</li>
-            <li data-order-size="\bM\b">M</li>
-            <li data-order-size="\bG\b">G</li>
-            <li data-order-size="\bGG\b">GG</li>
-            <li data-order-size="\bU\b">U</li>
-            <li data-order-size="\b36\b">36</li>
-            <li data-order-size="\b38\b">38</li>
-            <li data-order-size="\b40\b">40</li>
-            <li data-order-size="\b36\b">36</li>
-            <li data-order-size="\b38\b">38</li>
-            <li data-order-size="\b40\b">40</li>
 
-          </ul>
+    </div>
+    <div class="modal-body modal-filters-body ">
+      <div class="list-filters">
+        <div class="btn-dropdown-filter-mobile">
+          <p class="list-filters__title">CORES</p> <img src="img/arrow-down.svg" alt="">
         </div>
-        <div class="list-filters">
-          <p class="list-filters__title">FAIXAS DE PREÇOS</p>
-          <ul class="list-filters__checkboxes" id="checkboxes-price-mobile">
-            <li><input type="checkbox" data-order-price-gte="0" data-order-price-lte="50">de R$0 até R$50</li>
-            <li><input type="checkbox" data-order-price-gte="51" data-order-price-lte="150">de R$51 até R$150</li>
-            <li><input type="checkbox" data-order-price-gte="151" data-order-price-lte="300">de R$151 até R$300</li>
-            <li><input type="checkbox" data-order-price-gte="301" data-order-price-lte="500">de R$301 até R$500</li>
-            <li><input type="checkbox" data-order-price-gte="500" data-order-price-lte="">a partir de R$ 500</li>
-          </ul>
-        </div>
-           <div class="mobile-filter-actions">
-          <button id="btn-apply-filters" class="button-apply">APLICAR</button>
-          <button id="btn-clean-filters">LIMPAR</button>
+        <ul class="list-filters__checkboxes" id="ul-all-colors-mobile">
+          <li><input type="checkbox" data-order-color="Amarelo">Amarelo</li>
+          <li><input type="checkbox" data-order-color="Azul">Azul</li>
+          <li><input type="checkbox" data-order-color="Branco">Branco</li>
+          <li><input type="checkbox" data-order-color="Cinza">Cinza</li>
+          <li><input type="checkbox" data-order-color="Laranja">Laranja</li>
+          <li><input type="checkbox" data-order-color="Verde">Verde</li>
+          <li><input type="checkbox" data-order-color="Vermelho">Vermelho</li>
+          <li><input type="checkbox" data-order-color="Preto">Preto</li>
+          <li><input type="checkbox" data-order-color="Rosa">Rosa</li>
+          <li><input type="checkbox" data-order-color="Vinho">Vinho</li>
+        </ul>
+
       </div>
-      </div> 
-      
- 
-      
+      <div class="list-filters">
+        <div class="btn-dropdown-filter-mobile">
+          <p class="list-filters__title">TAMANHOS</p> <img src="img/arrow-down.svg" alt="">
+        </div>
+        <ul class="list-filters__buttons" id="ul-all-sizes-mobile">
+          <li data-order-size="\bP\b">P</li>
+          <li data-order-size="\bM\b">M</li>
+          <li data-order-size="\bG\b">G</li>
+          <li data-order-size="\bGG\b">GG</li>
+          <li data-order-size="\bU\b">U</li>
+          <li data-order-size="\b36\b">36</li>
+          <li data-order-size="\b38\b">38</li>
+          <li data-order-size="\b40\b">40</li>
+          <li data-order-size="\b36\b">36</li>
+          <li data-order-size="\b38\b">38</li>
+          <li data-order-size="\b40\b">40</li>
+
+        </ul>
+      </div>
+      <div class="list-filters">
+        <div class="btn-dropdown-filter-mobile">
+          <p class="list-filters__title">FAIXA DE PREÇO</p> <img src="img/arrow-down.svg" alt="">
+        </div>
+        <ul class="list-filters__checkboxes" id="checkboxes-price-mobile">
+          <li><input type="checkbox" data-order-price-gte="0" data-order-price-lte="50">de R$0 até R$50</li>
+          <li><input type="checkbox" data-order-price-gte="51" data-order-price-lte="150">de R$51 até R$150</li>
+          <li><input type="checkbox" data-order-price-gte="151" data-order-price-lte="300">de R$151 até R$300</li>
+          <li><input type="checkbox" data-order-price-gte="301" data-order-price-lte="500">de R$301 até R$500</li>
+          <li><input type="checkbox" data-order-price-gte="500" data-order-price-lte="">a partir de R$ 500</li>
+        </ul>
+      </div>
+      <div class="mobile-filter-actions">
+        <button id="btn-apply-filters" class="button-apply">APLICAR</button>
+        <button id="btn-clean-filters">LIMPAR</button>
+      </div>
+    </div>
+
+
+
   </div>
 </body>
 <h1>Desafio Cadastrsasa</h1>

@@ -304,4 +304,32 @@ function cleanFilters(): void {
 }
 document.getElementById("btn-apply-filters").addEventListener("click", applyFilters);
 document.getElementById("btn-clean-filters").addEventListener("click", cleanFilters);
+
+
+
+
+document.querySelectorAll(".btn-dropdown-filter-mobile").forEach(buttonDropdown => {
+  buttonDropdown.addEventListener("click", () => {
+    let dropdown = buttonDropdown.nextElementSibling
+    dropdown.classList.toggle("show-dropdown-filter-modal")
+    let hasModalOpen = false
+    document.querySelectorAll(".modal .list-filters__buttons, .modal .list-filters__checkboxes").forEach(dropdownVerify => {
+      
+      if (dropdownVerify.classList.contains("show-dropdown-filter-modal")) {
+        hasModalOpen=true
+        document.querySelector(".modal .mobile-filter-actions").style.visibility = "visible"
+
+      }
+      
+    })
+    if(!hasModalOpen){
+      document.querySelector(".modal .mobile-filter-actions").style.visibility = "hidden"
+    }
+    return false;
+  })
+  
+})
+
+
 document.addEventListener("DOMContentLoaded", main);
+
