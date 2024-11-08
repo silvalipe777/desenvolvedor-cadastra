@@ -1,17 +1,25 @@
 import { Product } from "./Product";
 import { CartItem } from "./Cart";
 
-
 const serverUrl = "http://localhost:5000";
+
 let currentPage = 1
+
 let order: String = ""
 let filterColor: String[] = []
 let filterSize: String[] = []
 let priceRange: String[] = []
-function main() {
 
+let filterColorMobile: String[] = []
+let filterSizeMobile: String[] = []
+let priceRangeMobile: String[] = []
+
+let cart: CartItem[] = []
+
+function main() {
   loadingProducts()
 }
+
 async function loadingProducts() {
   const productsList = fetchProducts(currentPage, order, filterColor, filterSize, priceRange)
   listProducts(await productsList);
@@ -88,13 +96,6 @@ function listProducts(products: Product[]): void {
 
 
 }
-function formatPrice(price: Number) {
-  return price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-}
-function formatInstallment(installment: Number[]) {
-  return `até ${installment[0]}x de ${formatPrice(installment[1])}`
-}
-
 function createCard(product: Product): string {
   return `<div class="product-card">
             <img src="${product.image}" alt="">
@@ -106,6 +107,26 @@ function createCard(product: Product): string {
             </div>
           </div>`
 }
+
+function formatPrice(price: Number) {
+  return price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+}
+function formatInstallment(installment: Number[]) {
+  return `até ${installment[0]}x de ${formatPrice(installment[1])}`
+}
+
+function showMore(): void {
+  currentPage++
+  loadingProducts()
+}
+function showAllColor(): void {
+  let listColors = document.getElementById("ul-all-colors-desktop")
+  let button = document.getElementById("button-show-all-colors")
+  listColors.classList.add("show-all-colors")
+  button.style.display = "none"
+  return
+}
+
 function showOrderModal(): void {
   let modal = document.getElementById("order-modal")
   modal.classList.add("show-modal")
@@ -127,25 +148,70 @@ function closeOrderModal(): void {
   return
 }
 
-function showMore(): void {
-  currentPage++
+function applyFilters(): void {
+  filterColor = filterColorMobile
+  filterSize = filterSizeMobile
+  priceRange = priceRangeMobile
+  currentPage = 1
   loadingProducts()
+  closeFilterModal()
+
 }
-function showAllColor(): void {
-  let listColors = document.getElementById("ul-all-colors-desktop")
-  let button = document.getElementById("button-show-all-colors")
-  listColors.classList.add("show-all-colors")
-  button.style.display = "none"
-  return
+function cleanFilters(): void {
+  document.querySelectorAll<HTMLInputElement>("#ul-all-colors-mobile li input").forEach(checkbox => {
+    checkbox.checked = false
+  });
+  filterColorMobile = []
+
+  document.querySelectorAll("#ul-all-sizes-mobile li").forEach(button => {
+    button.classList.remove("size-selected")
+  });
+  filterSizeMobile = []
+
+  document.querySelectorAll<HTMLInputElement>("#checkboxes-price-mobile li input").forEach(checkbox => {
+    checkbox.checked = false
+  });
+  priceRangeMobile = []
 }
 
+function handleClickDropdown() {
+  document.getElementById("dropdown-order-desktop").classList.toggle("show-dropdown-order");
+  return false;
+}
+
+function updateCartCount(): void {
+  const cartReduce = cart.reduce((total, item) => total + item.quantity, 0).toString()
+  let cartIcon = document.getElementById("cart-count")
+  cartIcon.innerText = cartReduce
+  if (
+    cartReduce !== "0"
+  ) {
+    cartIcon.style.display = "block"
+  }
+}
+function addToCart(productId: string): void {
+  let product = cart.find(product => product.id === productId)
+  if (product) {
+    product.quantity++
+  } else {
+    product = {
+      id: productId,
+      quantity: 1
+    }
+    cart.push(product)
+  }
+  updateCartCount()
+}
+
+document.getElementById("show-more-button").addEventListener("click", showMore);
 
 document.getElementById("button-show-all-colors").addEventListener("click", showAllColor);
+
 document.getElementById("order-button").addEventListener("click", showOrderModal);
 document.getElementById("filter-button").addEventListener("click", showFilterModal);
 document.getElementById("close-order-button").addEventListener("click", closeOrderModal);
 document.getElementById("close-filter-button").addEventListener("click", closeFilterModal);
-document.getElementById("show-more-button").addEventListener("click", showMore);
+
 document.querySelectorAll("#list-order-mobile li").forEach(button => {
   button.addEventListener("click", () => {
     let sortBy = button.getAttribute("data-order")
@@ -156,7 +222,90 @@ document.querySelectorAll("#list-order-mobile li").forEach(button => {
 
   });
 });
-document.querySelectorAll("#checkboxes-price-desktop li input").forEach(checkbox => {
+
+document.querySelectorAll<HTMLInputElement>("#ul-all-colors-mobile li input").forEach(checkbox => {
+  checkbox.addEventListener("change", () => {
+    const sortBy = checkbox.getAttribute("data-order-color")
+    const index = filterColorMobile.indexOf(sortBy)
+
+    if (checkbox.checked && index === -1) {
+      filterColorMobile.push(sortBy)
+    }
+    else if (index != -1) {
+      filterColorMobile.splice(index, 1)
+    }
+  });
+});
+document.querySelectorAll("#ul-all-sizes-mobile li").forEach(button => {
+  button.addEventListener("click", () => {
+    const sortBy = button.getAttribute("data-order-size")
+    const index = filterSizeMobile.indexOf(sortBy)
+    button.classList.toggle("size-selected")
+
+    if (button.classList.contains("size-selected") && index === -1) {
+      filterSizeMobile.push(sortBy)
+    }
+    else if (index != -1) {
+      filterSizeMobile.splice(index, 1)
+    }
+
+  });
+});
+document.querySelectorAll<HTMLInputElement>("#checkboxes-price-mobile li input").forEach(checkbox => {
+  checkbox.addEventListener("change", () => {
+    const price_gte = checkbox.getAttribute("data-order-price-gte")
+    const price_lte = checkbox.getAttribute("data-order-price-lte")
+    const sortBy = [price_gte, price_lte]
+
+    if (checkbox.checked) {
+      priceRangeMobile = sortBy
+      document.querySelectorAll<HTMLInputElement>("#checkboxes-price-mobile li input").forEach(cb => {
+        if (price_gte != cb.getAttribute("data-order-price-gte") || price_lte != cb.getAttribute("data-order-price-lte")) {
+          cb.checked = false
+        }
+      })
+    } else {
+      priceRangeMobile = []
+    }
+  });
+});
+
+document.querySelectorAll(".btn-dropdown-filter-mobile").forEach(buttonDropdown => {
+  buttonDropdown.addEventListener("click", () => {
+    let dropdown = buttonDropdown.nextElementSibling
+    dropdown.classList.toggle("show-dropdown-filter-modal")
+    let hasModalOpen = false
+    document.querySelectorAll(".modal .list-filters__buttons, .modal .list-filters__checkboxes").forEach(dropdownVerify => {
+      if (dropdownVerify.classList.contains("show-dropdown-filter-modal")) {
+        hasModalOpen = true
+        document.querySelector<HTMLDivElement>(".modal .mobile-filter-actions").style.visibility = "visible"
+      }
+    })
+    if (!hasModalOpen) {
+      document.querySelector<HTMLDivElement>(".modal .mobile-filter-actions").style.visibility = "hidden"
+    }
+    return false;
+  })
+})
+document.getElementById("btn-apply-filters").addEventListener("click", applyFilters);
+document.getElementById("btn-clean-filters").addEventListener("click", cleanFilters);
+
+document.getElementById("btn-open-dropdown-order").addEventListener("click", handleClickDropdown);
+document.querySelectorAll("#list-order-desktop li").forEach(button => {
+  button.addEventListener("click", () => {
+    let sortBy = button.getAttribute("data-order")
+    document.querySelector<HTMLSpanElement>("#btn-open-dropdown-order span").innerText = button.textContent;
+    currentPage = 1
+    order = sortBy
+    currentPage = 1
+    loadingProducts()
+    handleClickDropdown()
+
+
+  });
+});
+
+document.querySelectorAll<HTMLInputElement>("#checkboxes-price-desktop li input").forEach(checkbox => {
   checkbox.addEventListener("change", () => {
     const price_gte = checkbox.getAttribute("data-order-price-gte")
     const price_lte = checkbox.getAttribute("data-order-price-lte")
@@ -164,7 +313,7 @@ document.querySelectorAll("#checkboxes-price-desktop li input").forEach(checkbox
 
     if (checkbox.checked) {
       priceRange = sortBy
-      document.querySelectorAll("#checkboxes-price-desktop li input").forEach(cb => {
+      document.querySelectorAll<HTMLInputElement>("#checkboxes-price-desktop li input").forEach(cb => {
         if (price_gte != cb.getAttribute("data-order-price-gte") || price_lte != cb.getAttribute("data-order-price-lte")) {
           cb.checked = false
         }
@@ -177,8 +326,7 @@ document.querySelectorAll("#checkboxes-price-desktop li input").forEach(checkbox
     loadingProducts()
   });
 });
-
-document.querySelectorAll("#ul-all-colors-desktop li input").forEach(checkbox => {
+document.querySelectorAll<HTMLInputElement>("#ul-all-colors-desktop li input").forEach(checkbox => {
   checkbox.addEventListener("change", () => {
     const sortBy = checkbox.getAttribute("data-order-color")
     const index = filterColor.indexOf(sortBy)
@@ -210,178 +358,5 @@ document.querySelectorAll("#ul-all-sizes-desktop li").forEach(button => {
   });
 });
 
-
-document.getElementById("btn-open-dropdown-order").addEventListener("click", handleClickDropdown);
-function handleClickDropdown() {
-  document.getElementById("dropdown-order-desktop").classList.toggle("show-dropdown-order");
-  return false;
-}
-document.querySelectorAll("#list-order-desktop li").forEach(button => {
-  button.addEventListener("click", () => {
-    let sortBy = button.getAttribute("data-order")
-    document.querySelector("#btn-open-dropdown-order span").innerText = button.textContent;
-    currentPage = 1
-    order = sortBy
-    currentPage = 1
-    loadingProducts()
-    handleClickDropdown()
-
-
-  });
-});
-
-let filterColorMobile: String[] = []
-let filterSizeMobile: String[] = []
-let priceRangeMobile: String[] = []
-
-
-document.querySelectorAll("#ul-all-colors-mobile li input").forEach(checkbox => {
-  checkbox.addEventListener("change", () => {
-    const sortBy = checkbox.getAttribute("data-order-color")
-    const index = filterColorMobile.indexOf(sortBy)
-
-    if (checkbox.checked && index === -1) {
-      filterColorMobile.push(sortBy)
-    }
-    else if (index != -1) {
-      filterColorMobile.splice(index, 1)
-    }
-  });
-});
-
-document.querySelectorAll("#ul-all-sizes-mobile li").forEach(button => {
-  button.addEventListener("click", () => {
-    const sortBy = button.getAttribute("data-order-size")
-    const index = filterSizeMobile.indexOf(sortBy)
-    button.classList.toggle("size-selected")
-
-    if (button.classList.contains("size-selected") && index === -1) {
-      filterSizeMobile.push(sortBy)
-    }
-    else if (index != -1) {
-      filterSizeMobile.splice(index, 1)
-    }
-
-  });
-});
-
-document.querySelectorAll("#checkboxes-price-mobile li input").forEach(checkbox => {
-  checkbox.addEventListener("change", () => {
-    const price_gte = checkbox.getAttribute("data-order-price-gte")
-    const price_lte = checkbox.getAttribute("data-order-price-lte")
-    const sortBy = [price_gte, price_lte]
-
-    if (checkbox.checked) {
-      priceRangeMobile = sortBy
-      document.querySelectorAll("#checkboxes-price-mobile li input").forEach(cb => {
-        if (price_gte != cb.getAttribute("data-order-price-gte") || price_lte != cb.getAttribute("data-order-price-lte")) {
-          cb.checked = false
-        }
-      })
-
-    } else {
-      priceRangeMobile = []
-    }
-
-  });
-});
-
-function applyFilters(): void {
-  filterColor = filterColorMobile
-  filterSize = filterSizeMobile
-  priceRange = priceRangeMobile
-  currentPage = 1
-  loadingProducts()
-  closeFilterModal()
-
-}
-
-function cleanFilters(): void {
-  document.querySelectorAll("#ul-all-colors-mobile li input").forEach(checkbox => {
-
-    checkbox.checked = false
-
-  });
-  filterColorMobile = []
-
-  document.querySelectorAll("#ul-all-sizes-mobile li").forEach(button => {
-    button.classList.remove("size-selected")
-  });
-  filterSizeMobile = []
-
-  document.querySelectorAll("#checkboxes-price-mobile li input").forEach(checkbox => {
-    checkbox.checked = false
-  });
-  priceRangeMobile = []
-
-}
-document.getElementById("btn-apply-filters").addEventListener("click", applyFilters);
-document.getElementById("btn-clean-filters").addEventListener("click", cleanFilters);
-
-
-
-
-document.querySelectorAll(".btn-dropdown-filter-mobile").forEach(buttonDropdown => {
-  buttonDropdown.addEventListener("click", () => {
-    let dropdown = buttonDropdown.nextElementSibling
-    dropdown.classList.toggle("show-dropdown-filter-modal")
-    let hasModalOpen = false
-    document.querySelectorAll(".modal .list-filters__buttons, .modal .list-filters__checkboxes").forEach(dropdownVerify => {
-
-      if (dropdownVerify.classList.contains("show-dropdown-filter-modal")) {
-        hasModalOpen = true
-        document.querySelector(".modal .mobile-filter-actions").style.visibility = "visible"
-
-      }
-
-    })
-    if (!hasModalOpen) {
-      document.querySelector(".modal .mobile-filter-actions").style.visibility = "hidden"
-    }
-    return false;
-  })
-
-})
-
-
-
-
-let cart: CartItem[] = []
-function updateCartCount(): void {
-  const cartReduce = cart.reduce((total, item) => total + item.quantity, 0).toString()
-  let cartIcon = document.getElementById("cart-count")
-  cartIcon.innerText = cartReduce
-  if (
-    cartReduce !== "0"
-  ) {
-    cartIcon.style.display = "block"
-  }
-}
-function addToCart(productId: string): void {
-  let product = cart.find(product => product.id === productId)
-  if (product) {
-    product.quantity++
-  } else {
-    product = {
-      id: productId,
-      quantity: 1
-    }
-    cart.push(product)
-  }
-  updateCartCount()
-}
-
-
-// function createCard(product: Product): string {
-//   return `<div class="product-card">
-//             <img src="${product.image}" alt="">
-//             <div class="product-card__description">
-//               <h3>${product.name}</h3>
-//               <p  class="price">${formatPrice(product.price)}<p>
-//               <p>${formatInstallment(product.parcelamento)}</p>
-//               <button data-product-id="${product.id}">Comprar</button>
-//             </div>
-//           </div>`
-// }
 document.addEventListener("DOMContentLoaded", main);
 
