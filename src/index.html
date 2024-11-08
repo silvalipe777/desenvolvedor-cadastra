@@ -23,10 +23,58 @@
       <button id="order-button">Ordenar</button>
     </div>
     <div class="plp__container">
+      <div class="plp__desktop-filters">
+        <div class="list-filters">
+          <p class="list-filters__title">CORES</p>
+          <ul class="list-filters__checkboxes" id="ul-all-colors">
+            <li><input type="checkbox">Amarelo</li>
+            <li><input type="checkbox">Azul</li>
+            <li><input type="checkbox">Branco</li>
+            <li><input type="checkbox">Cinza</li>
+            <li><input type="checkbox">Laranja</li>
+            <li><input type="checkbox">Verde</li>
+            <li><input type="checkbox">Vermelho</li>
+            <li><input type="checkbox">Preto</li>
+            <li><input type="checkbox">Rosa</li>
+            <li><input type="checkbox">Vinho</li>
+          </ul>
+          <div id="button-show-all-colors">
+            <p>Ver todas as cores</p>
+            <img src="img/arrow-down.svg" alt="">
+          </div>
+        </div>
+        <div class="list-filters">
+          <p class="list-filters__title">TAMANHOS</p>
+          <ul class="list-filters__buttons">
+            <li>P</li>
+            <li class="isSelected">M</li>
+            <li>G</li>
+            <li>GG</li>
+            <li>U</li>
+            <li>36</li>
+            <li>38</li>
+            <li>40</li>
+            <li>36</li>
+            <li>38</li>
+            <li>40</li>
+            
+          </ul>
+        </div>
+        <div class="list-filters">
+          <p class="list-filters__title">FAIXAS DE PREÇOS</p>
+          <ul class="list-filters__checkboxes">
+            <li><input type="checkbox">de R$0 até R$50</li>
+            <li><input type="checkbox">de R$51 até R$150</li>
+            <li><input type="checkbox">de R$151 até R$300</li>
+            <li><input type="checkbox">de R$301 até R$500</li>
+            <li><input type="checkbox">a partir de R$ 500</li>
+          </ul>
+        </div>
+      </div>
       <div class="plp__content">
         <div class="product-grid" id="product-container">
         </div>
-        <button class="plp__show-more">Carregar Mais</button>
+        <button class="plp__show-more" id="show-more-button">Carregar Mais</button>
       </div>
   </section>
   <footer class="footer">
@@ -35,17 +83,22 @@
   <div id="order-modal" class="modal">
     <div class="modal-header">
       <h2>ORDERNAR</h2>
-      <button>x</button>
+      <button id="close-order-button" class="modal-header__close-modal"><img src="/img/close.svg" alt=""></button>
     </div>
     <div class="modal-body">
-      <ul>
-        <li>Mais recente</li>
-        <li>Maior preço</li>
-        <li>Menor preço</li>
+      <ul id="list-order-mobile"class="order-options">
+        <li data-order="data-recente">Mais recente</li>
+        <li data-order="preco-decrescente">Maior preço</li>
+        <li data-order="preco-crescente">Menor preço</li>
       </ul>
     </div>
   </div>
-  <div id="filter-modal" class="modal">teste errado</div>
+  <div id="filter-modal" class="modal">
+    <div class="modal-header">
+      <h2>ORDERNAR</h2>
+      <button id="close-filter-button" class="modal-header__close-modal"><img src="/img/close.svg" alt=""></button>
+    </div>
+  </div>
 </body>
 <h1>Desafio Cadastra</h1>
 
