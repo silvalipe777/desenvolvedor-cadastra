@@ -262,9 +262,9 @@ body {
             font-weight: 400;
             color: #000000;
 
-            /* Estilo do checkbox */
+           
             input[type="checkbox"] {
-                /* Remove o estilo padrão */
+               
                 -webkit-appearance: none;
                 -moz-appearance: none;
                 appearance: none;
@@ -272,13 +272,12 @@ body {
                 width: 16px;
                 height: 16px;
                 border: 1px solid rgba(0, 0, 0, 0.5);
-                /* Borda preta com 50% de opacidade */
+              
 
                 position: relative;
                 cursor: pointer;
             }
 
-            /* Estilo do quadrado central que aparece quando marcado */
             input[type="checkbox"]:checked::after {
                 content: "";
                 position: absolute;
@@ -287,7 +286,7 @@ body {
                 width: 10px;
                 height: 10px;
                 background-color: #fb953e;
-                /* Cor do quadrado interno */
+    
             }
 
         }
