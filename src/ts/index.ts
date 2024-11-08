@@ -2,16 +2,16 @@ import { Product } from "./Product";
 
 const serverUrl = "http://localhost:5000";
 let currentPage = 1
-let order:String = ""
-let filterColor:String[] = []
-let filterSize:String[] =[]
-let priceRange:String[] = []
- function main() {
+let order: String = ""
+let filterColor: String[] = []
+let filterSize: String[] = []
+let priceRange: String[] = []
+function main() {
 
   loadingProducts()
 }
-async function loadingProducts(){
-  const productsList = fetchProducts(currentPage, order,filterColor,filterSize,priceRange )
+async function loadingProducts() {
+  const productsList = fetchProducts(currentPage, order, filterColor, filterSize, priceRange)
   listProducts(await productsList);
 }
 async function fetchProducts(page: Number, sort: String, colorsFilters: String[], sizeFilters: String[], priceFilters: String[]): Promise<Product[]> {
@@ -66,9 +66,9 @@ function listProducts(products: Product[]): void {
     console.error("Product container not found")
     return
   }
-  if(currentPage ===1){
-  productContainer.innerHTML = products.map(product => createCard(product)).join("")
-  }else{
+  if (currentPage === 1) {
+    productContainer.innerHTML = products.map(product => createCard(product)).join("")
+  } else {
     productContainer.innerHTML += products.map(product => createCard(product)).join("")
   }
 
@@ -115,11 +115,11 @@ function closeOrderModal(): void {
 }
 
 function showMore(): void {
-  currentPage ++
+  currentPage++
   loadingProducts()
 }
 function showAllColor(): void {
-  let listColors = document.getElementById("ul-all-colors")
+  let listColors = document.getElementById("ul-all-colors-desktop")
   let button = document.getElementById("button-show-all-colors")
   listColors.classList.add("show-all-colors")
   button.style.display = "none"
@@ -136,11 +136,172 @@ document.getElementById("show-more-button").addEventListener("click", showMore);
 document.querySelectorAll("#list-order-mobile li").forEach(button => {
   button.addEventListener("click", () => {
     let sortBy = button.getAttribute("data-order")
-    order = sortBy  
+    order = sortBy
     currentPage = 1
     loadingProducts()
     closeOrderModal()
+
+  });
+});
+document.querySelectorAll("#checkboxes-price-desktop li input").forEach(checkbox => {
+  checkbox.addEventListener("change", () => {
+    const price_gte = checkbox.getAttribute("data-order-price-gte")
+    const price_lte = checkbox.getAttribute("data-order-price-lte")
+    const sortBy = [price_gte, price_lte]
+
+    if (checkbox.checked) {
+      priceRange = sortBy
+      document.querySelectorAll("#checkboxes-price-desktop li input").forEach(cb => {
+        if (price_gte != cb.getAttribute("data-order-price-gte") || price_lte != cb.getAttribute("data-order-price-lte")) {
+          cb.checked = false
+        }
+      })
+
+    } else {
+      priceRange = []
+    }
+    currentPage = 1
+    loadingProducts()
+  });
+});
+
+document.querySelectorAll("#ul-all-colors-desktop li input").forEach(checkbox => {
+  checkbox.addEventListener("change", () => {
+    const sortBy = checkbox.getAttribute("data-order-color")
+    const index = filterColor.indexOf(sortBy)
+    
+    if (checkbox.checked && index === -1) {
+        filterColor.push(sortBy)
+    }
+    else if(index != -1){
+      filterColor.splice(index,1)
+    }
+    currentPage = 1
+    loadingProducts()
+  });
+});
+document.querySelectorAll("#ul-all-sizes-desktop li").forEach(button => {
+  button.addEventListener("click", () => {
+    const sortBy = button.getAttribute("data-order-size")
+    const index = filterSize.indexOf(sortBy)
+    button.classList.toggle("size-selected")
+    
+    if (button.classList.contains("size-selected") && index === -1) {
+        filterSize.push(sortBy)
+    }
+    else if(index != -1){
+      filterSize.splice(index,1)
+    }
+    currentPage = 1
+    loadingProducts()
+  });
+});
+
+
+document.getElementById("btn-open-dropdown-order").addEventListener("click", handleClickDropdown);
+function handleClickDropdown(){
+  document.getElementById("dropdown-order-desktop").classList.toggle("show-dropdown-order");
+  return false;
+}
+document.querySelectorAll("#list-order-desktop li").forEach(button => {
+  button.addEventListener("click", () => {
+    let sortBy = button.getAttribute("data-order")
+     document.querySelector("#btn-open-dropdown-order span").innerText= button.textContent ;
+    currentPage = 1
+    order = sortBy
+    currentPage = 1
+    loadingProducts()
+    handleClickDropdown()
+
+
+  });
+});
+
+let filterColorMobile : String[] = []
+let filterSizeMobile : String[] = []
+let priceRangeMobile : String[] = []
+
+
+document.querySelectorAll("#ul-all-colors-mobile li input").forEach(checkbox => {
+  checkbox.addEventListener("change", () => {
+    const sortBy = checkbox.getAttribute("data-order-color")
+    const index = filterColorMobile.indexOf(sortBy)
+    
+    if (checkbox.checked && index === -1) {
+        filterColorMobile.push(sortBy)
+    }
+    else if(index != -1){
+      filterColorMobile.splice(index,1)
+    }
+  });
+});
+
+document.querySelectorAll("#ul-all-sizes-mobile li").forEach(button => {
+  button.addEventListener("click", () => {
+    const sortBy = button.getAttribute("data-order-size")
+    const index = filterSizeMobile.indexOf(sortBy)
+    button.classList.toggle("size-selected")
+    
+    if (button.classList.contains("size-selected") && index === -1) {
+        filterSizeMobile.push(sortBy)
+    }
+    else if(index != -1){
+      filterSizeMobile.splice(index,1)
+    }
  
   });
 });
+
+document.querySelectorAll("#checkboxes-price-mobile li input").forEach(checkbox => {
+  checkbox.addEventListener("change", () => {
+    const price_gte = checkbox.getAttribute("data-order-price-gte")
+    const price_lte = checkbox.getAttribute("data-order-price-lte")
+    const sortBy = [price_gte, price_lte]
+
+    if (checkbox.checked) {
+      priceRangeMobile = sortBy
+      document.querySelectorAll("#checkboxes-price-mobile li input").forEach(cb => {
+        if (price_gte != cb.getAttribute("data-order-price-gte") || price_lte != cb.getAttribute("data-order-price-lte")) {
+          cb.checked = false
+        }
+      })
+
+    } else {
+      priceRangeMobile = []
+    }
+  
+  });
+});
+
+function applyFilters(): void {
+  filterColor = filterColorMobile
+  filterSize = filterSizeMobile
+  priceRange = priceRangeMobile
+  currentPage = 1
+  loadingProducts()
+  closeFilterModal()
+  
+}
+
+function cleanFilters(): void {
+  document.querySelectorAll("#ul-all-colors-mobile li input").forEach(checkbox => {
+  
+  checkbox.checked=false
+
+  });
+  filterColorMobile = []
+  
+  document.querySelectorAll("#ul-all-sizes-mobile li").forEach(button => {
+    button.classList.remove("size-selected")
+  });
+  filterSizeMobile = []
+
+  document.querySelectorAll("#checkboxes-price-mobile li input").forEach(checkbox => {
+  checkbox.checked=false
+  });
+  priceRangeMobile = []
+
+}
+document.getElementById("btn-apply-filters").addEventListener("click", applyFilters);
+document.getElementById("btn-clean-filters").addEventListener("click", cleanFilters);
 document.addEventListener("DOMContentLoaded", main);
