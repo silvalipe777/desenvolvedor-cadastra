@@ -1,4 +1,6 @@
 import { Product } from "./Product";
+import { CartItem } from "./Cart";
+
 
 const serverUrl = "http://localhost:5000";
 let currentPage = 1
@@ -72,6 +74,17 @@ function listProducts(products: Product[]): void {
     productContainer.innerHTML += products.map(product => createCard(product)).join("")
   }
 
+  document.querySelectorAll(".plp .product-card button").forEach(button => {
+
+    button.addEventListener("click", () => {
+      let productId = button.getAttribute("data-product-id")
+      addToCart(productId)
+
+
+    });
+
+  });
+
 
 
 }
@@ -89,7 +102,7 @@ function createCard(product: Product): string {
               <h3>${product.name}</h3>
               <p  class="price">${formatPrice(product.price)}<p>
               <p>${formatInstallment(product.parcelamento)}</p>
-              <button>Comprar</button>
+              <button data-product-id="${product.id}">Comprar</button>
             </div>
           </div>`
 }
@@ -169,12 +182,12 @@ document.querySelectorAll("#ul-all-colors-desktop li input").forEach(checkbox =>
   checkbox.addEventListener("change", () => {
     const sortBy = checkbox.getAttribute("data-order-color")
     const index = filterColor.indexOf(sortBy)
-    
+
     if (checkbox.checked && index === -1) {
-        filterColor.push(sortBy)
+      filterColor.push(sortBy)
     }
-    else if(index != -1){
-      filterColor.splice(index,1)
+    else if (index != -1) {
+      filterColor.splice(index, 1)
     }
     currentPage = 1
     loadingProducts()
@@ -185,12 +198,12 @@ document.querySelectorAll("#ul-all-sizes-desktop li").forEach(button => {
     const sortBy = button.getAttribute("data-order-size")
     const index = filterSize.indexOf(sortBy)
     button.classList.toggle("size-selected")
-    
+
     if (button.classList.contains("size-selected") && index === -1) {
-        filterSize.push(sortBy)
+      filterSize.push(sortBy)
     }
-    else if(index != -1){
-      filterSize.splice(index,1)
+    else if (index != -1) {
+      filterSize.splice(index, 1)
     }
     currentPage = 1
     loadingProducts()
@@ -199,14 +212,14 @@ document.querySelectorAll("#ul-all-sizes-desktop li").forEach(button => {
 
 
 document.getElementById("btn-open-dropdown-order").addEventListener("click", handleClickDropdown);
-function handleClickDropdown(){
+function handleClickDropdown() {
   document.getElementById("dropdown-order-desktop").classList.toggle("show-dropdown-order");
   return false;
 }
 document.querySelectorAll("#list-order-desktop li").forEach(button => {
   button.addEventListener("click", () => {
     let sortBy = button.getAttribute("data-order")
-     document.querySelector("#btn-open-dropdown-order span").innerText= button.textContent ;
+    document.querySelector("#btn-open-dropdown-order span").innerText = button.textContent;
     currentPage = 1
     order = sortBy
     currentPage = 1
@@ -217,21 +230,21 @@ document.querySelectorAll("#list-order-desktop li").forEach(button => {
   });
 });
 
-let filterColorMobile : String[] = []
-let filterSizeMobile : String[] = []
-let priceRangeMobile : String[] = []
+let filterColorMobile: String[] = []
+let filterSizeMobile: String[] = []
+let priceRangeMobile: String[] = []
 
 
 document.querySelectorAll("#ul-all-colors-mobile li input").forEach(checkbox => {
   checkbox.addEventListener("change", () => {
     const sortBy = checkbox.getAttribute("data-order-color")
     const index = filterColorMobile.indexOf(sortBy)
-    
+
     if (checkbox.checked && index === -1) {
-        filterColorMobile.push(sortBy)
+      filterColorMobile.push(sortBy)
     }
-    else if(index != -1){
-      filterColorMobile.splice(index,1)
+    else if (index != -1) {
+      filterColorMobile.splice(index, 1)
     }
   });
 });
@@ -241,14 +254,14 @@ document.querySelectorAll("#ul-all-sizes-mobile li").forEach(button => {
     const sortBy = button.getAttribute("data-order-size")
     const index = filterSizeMobile.indexOf(sortBy)
     button.classList.toggle("size-selected")
-    
+
     if (button.classList.contains("size-selected") && index === -1) {
-        filterSizeMobile.push(sortBy)
+      filterSizeMobile.push(sortBy)
     }
-    else if(index != -1){
-      filterSizeMobile.splice(index,1)
+    else if (index != -1) {
+      filterSizeMobile.splice(index, 1)
     }
- 
+
   });
 });
 
@@ -269,7 +282,7 @@ document.querySelectorAll("#checkboxes-price-mobile li input").forEach(checkbox 
     } else {
       priceRangeMobile = []
     }
-  
+
   });
 });
 
@@ -280,24 +293,24 @@ function applyFilters(): void {
   currentPage = 1
   loadingProducts()
   closeFilterModal()
-  
+
 }
 
 function cleanFilters(): void {
   document.querySelectorAll("#ul-all-colors-mobile li input").forEach(checkbox => {
-  
-  checkbox.checked=false
+
+    checkbox.checked = false
 
   });
   filterColorMobile = []
-  
+
   document.querySelectorAll("#ul-all-sizes-mobile li").forEach(button => {
     button.classList.remove("size-selected")
   });
   filterSizeMobile = []
 
   document.querySelectorAll("#checkboxes-price-mobile li input").forEach(checkbox => {
-  checkbox.checked=false
+    checkbox.checked = false
   });
   priceRangeMobile = []
 
@@ -314,22 +327,61 @@ document.querySelectorAll(".btn-dropdown-filter-mobile").forEach(buttonDropdown 
     dropdown.classList.toggle("show-dropdown-filter-modal")
     let hasModalOpen = false
     document.querySelectorAll(".modal .list-filters__buttons, .modal .list-filters__checkboxes").forEach(dropdownVerify => {
-      
+
       if (dropdownVerify.classList.contains("show-dropdown-filter-modal")) {
-        hasModalOpen=true
+        hasModalOpen = true
         document.querySelector(".modal .mobile-filter-actions").style.visibility = "visible"
 
       }
-      
+
     })
-    if(!hasModalOpen){
+    if (!hasModalOpen) {
       document.querySelector(".modal .mobile-filter-actions").style.visibility = "hidden"
     }
     return false;
   })
-  
+
 })
 
 
+
+
+let cart: CartItem[] = []
+function updateCartCount(): void {
+  const cartReduce = cart.reduce((total, item) => total + item.quantity, 0).toString()
+  let cartIcon = document.getElementById("cart-count")
+  cartIcon.innerText = cartReduce
+  if (
+    cartReduce !== "0"
+  ) {
+    cartIcon.style.display = "block"
+  }
+}
+function addToCart(productId: string): void {
+  let product = cart.find(product => product.id === productId)
+  if (product) {
+    product.quantity++
+  } else {
+    product = {
+      id: productId,
+      quantity: 1
+    }
+    cart.push(product)
+  }
+  updateCartCount()
+}
+
+
+// function createCard(product: Product): string {
+//   return `<div class="product-card">
+//             <img src="${product.image}" alt="">
+//             <div class="product-card__description">
+//               <h3>${product.name}</h3>
+//               <p  class="price">${formatPrice(product.price)}<p>
+//               <p>${formatInstallment(product.parcelamento)}</p>
+//               <button data-product-id="${product.id}">Comprar</button>
+//             </div>
+//           </div>`
+// }
 document.addEventListener("DOMContentLoaded", main);
 
